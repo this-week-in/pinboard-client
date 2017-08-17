@@ -9,6 +9,6 @@ jdk:
 cache:
   directories:
     - $HOME/.m2/repository/
-#
-# script:
-#   -  mvn -e verify deploy
+
+script:
+  -  mvn -e verify deploy
