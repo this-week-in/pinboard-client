@@ -13,12 +13,12 @@ import org.springframework.web.client.RestTemplate
 @EnableConfigurationProperties(PinboardProperties::class)
 class PinboardConfiguration {
 
-    @Bean
-    @ConditionalOnMissingBean
-    fun pinboardClient(properties: PinboardProperties) = PinboardClient(properties.token!!, restTemplate())
+	@Bean
+	@ConditionalOnMissingBean
+	fun pinboardClient(properties: PinboardProperties, rt: RestTemplate) = PinboardClient(properties.token!!, rt)
 
-    @Bean
-    @ConditionalOnMissingBean
-    fun restTemplate() = RestTemplate()
+	@Bean
+	@ConditionalOnMissingBean
+	fun restTemplate() = RestTemplate()
 
 }
