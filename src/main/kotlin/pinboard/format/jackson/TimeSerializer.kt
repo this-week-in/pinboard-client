@@ -11,11 +11,12 @@ import java.util.*
  */
 class TimeSerializer(t: Class<Date>?) : StdSerializer<Date>(t) {
 
-    private constructor() : this(Date::class.java)
+	private constructor() : this(Date::class.java)
 
-    override fun serialize(value: Date?,
-                           gen: JsonGenerator?,
-                           provider: SerializerProvider?) {
-        gen!!.writeString(FormatUtils.encodeDate(value!!))
-    }
+	override fun serialize(value: Date?,
+	                       gen: JsonGenerator?,
+	                       provider: SerializerProvider?) {
+		if (null != value)
+			gen!!.writeString(FormatUtils.encodeDate(value))
+	}
 }
