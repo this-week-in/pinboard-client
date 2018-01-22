@@ -1,5 +1,6 @@
 package pinboard.format
 
+import org.apache.commons.logging.LogFactory
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -7,6 +8,8 @@ import java.util.*
  * @author <a href="mailto:josh@joshlong.com">Josh Long</a>
  */
 object FormatUtils {
+
+    private val log = LogFactory.getLog(javaClass)
 
     private val decodeDateFormat = utcAwareDateFormatter("yyyy-MM-dd'T'HH:mm:ss'Z'")
     private val encodeDateFormat = utcAwareDateFormatter("yyyy-MM-dd'T'HH:mm:ss'Z'")
@@ -17,16 +20,18 @@ object FormatUtils {
         return encodeNoteDateFormat.format(d)
     }
 
-    fun decodeNoteDate(ds: String): Date {
-        return decodeNoteDateFormat.parse(ds)
+    fun decodeNoteDate(noteDate: String): Date {
+        log.debug("decodeNoteDate: $noteDate")
+        return decodeNoteDateFormat.parse(noteDate)
     }
 
     fun encodeDate(d: Date): String {
         return encodeDateFormat.format(d)
     }
 
-    fun decodeDate(s: String): java.util.Date {
-        return decodeDateFormat.parse(s)
+    fun decodeDate(date: String): java.util.Date? {
+        log.debug("decode date: $date")
+        return decodeDateFormat.parse(date)
     }
 
     fun encodeYesOrNo(b: Boolean): String {
