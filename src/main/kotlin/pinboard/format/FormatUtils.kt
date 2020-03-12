@@ -9,44 +9,34 @@ import java.util.*
  */
 object FormatUtils {
 
-    private val log = LogFactory.getLog(javaClass)
+	private val log = LogFactory.getLog(javaClass)
 
-    private val decodeDateFormat = utcAwareDateFormatter("yyyy-MM-dd'T'HH:mm:ss'Z'")
-    private val encodeDateFormat = utcAwareDateFormatter("yyyy-MM-dd'T'HH:mm:ss'Z'")
-    private val decodeNoteDateFormat = utcAwareDateFormatter("yyyy-MM-dd HH:mm:ss")
-    private val encodeNoteDateFormat = utcAwareDateFormatter("yyyy-MM-dd HH:mm:ss")
+	private val decodeDateFormat = utcAwareDateFormatter("yyyy-MM-dd'T'HH:mm:ss'Z'")
+	private val encodeDateFormat = utcAwareDateFormatter("yyyy-MM-dd'T'HH:mm:ss'Z'")
+	private val decodeNoteDateFormat = utcAwareDateFormatter("yyyy-MM-dd HH:mm:ss")
+	private val encodeNoteDateFormat = utcAwareDateFormatter("yyyy-MM-dd HH:mm:ss")
 
-    fun encodeNoteDate(d: Date): String {
-        return encodeNoteDateFormat.format(d)
-    }
+	fun encodeNoteDate(d: Date): String = encodeNoteDateFormat.format(d)
 
-    fun decodeNoteDate(noteDate: String): Date {
-        log.debug("decodeNoteDate: $noteDate")
-        return decodeNoteDateFormat.parse(noteDate)
-    }
+	fun decodeNoteDate(noteDate: String): Date =
+			decodeNoteDateFormat.parse(noteDate).apply {
+				log.debug("decodeNoteDate: $noteDate")
+			}
 
-    fun encodeDate(d: Date): String {
-        return encodeDateFormat.format(d)
-    }
+	fun encodeDate(d: Date): String = encodeDateFormat.format(d)
 
-    fun decodeDate(date: String): java.util.Date? {
-        log.debug("decode date: $date")
-        return decodeDateFormat.parse(date)
-    }
+	fun decodeDate(date: String): Date =
+			decodeDateFormat.parse(date).apply {
+				log.debug("decode date: $date")
+			}
 
-    fun encodeYesOrNo(b: Boolean): String {
-        return if (b) "yes" else "no"
-    }
+	fun encodeYesOrNo(b: Boolean) = if (b) "yes" else "no"
 
-    fun decodeYesOrNo(yesOrNoStr: String): Boolean {
-        return yesOrNoStr.toLowerCase().trim().contentEquals("yes")
-    }
+	fun decodeYesOrNo(yesOrNoStr: String) = yesOrNoStr.toLowerCase().trim().contentEquals("yes")
 
-    private fun utcAwareDateFormatter(sdfString: String): SimpleDateFormat {
-        val sdf = SimpleDateFormat(sdfString)
-        sdf.timeZone = TimeZone.getTimeZone("UTC")
-        return sdf
-    }
-
+	private fun utcAwareDateFormatter(sdfString: String) =
+			SimpleDateFormat(sdfString).apply {
+				timeZone = TimeZone.getTimeZone("UTC")
+			}
 
 }

@@ -2,7 +2,7 @@ package pinboard.format.jackson
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.assertj.core.api.BDDAssertions
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import pinboard.Bookmark
 import java.util.*
 
@@ -43,7 +43,7 @@ class TimeSerializationTest {
             "extended":"Spring Boot  ",
             "meta":"42574efde586ee9671132da090d704cc",
             "hash":"abadeea6b8fb3df8879edc74c25afa42",
-            "time":"${dateTime}",
+            "time":"$dateTime",
             "shared":"no",
             "toread":"yes"
         }

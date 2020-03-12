@@ -60,15 +60,15 @@ open class PinboardClient(private var token: String,
 	}
 
 	open fun getAllPosts(tag: Array<String>,
-	                start: Int = 0,
-	                results: Int = -1,
-	                fromdt: Date? = null,
-	                todt: Date? = null,
-	                meta: Int = 0): Array<Bookmark> {
+	                     start: Int = 0,
+	                     results: Int = -1,
+	                     fromdt: Date? = null,
+	                     todt: Date? = null,
+	                     meta: Int = 0): Array<Bookmark> {
 		assert(tag.size <= 3, { "there should be no more than three tag" })
 		assert(tag.isNotEmpty(), { "there should be at least one tag" })
 		val parmMap = exchangeParameters("tag" to tag, "start" to start, "results" to results, "fromdt" to fromdt, "todt" to todt, "meta" to meta)
-		return exchange("/posts/all", parmMap, object : ParameterizedTypeReference<Array<Bookmark>>() {}).body
+		return exchange("/posts/all", parmMap, object : ParameterizedTypeReference<Array<Bookmark>>() {}).body!!
 	}
 
 	open fun getPosts(url: String? = null, dt: Date? = null, tag: Array<String>? = null, meta: Boolean? = null): Bookmarks {
@@ -78,23 +78,23 @@ open class PinboardClient(private var token: String,
 				"url" to url,
 				"meta" to meta,
 				"dt" to dt)
-		return exchange("/posts/get", parameters, object : ParameterizedTypeReference<Bookmarks>() {}).body
+		return exchange("/posts/get", parameters, object : ParameterizedTypeReference<Bookmarks>() {}).body!!
 	}
 
 	open fun getRecentPosts(tag: Array<String>? = null, count: Int? = 15): Bookmarks {
 		val parameters = exchangeParameters("tag" to tag, "count" to count)
-		return exchange("/posts/recent", parameters, object : ParameterizedTypeReference<Bookmarks>() {}).body
+		return exchange("/posts/recent", parameters, object : ParameterizedTypeReference<Bookmarks>() {}).body!!
 	}
 
 	open fun getNoOfPostsByDate(tag: Array<String>): PostsByDate {
 		val params = exchangeParameters("tag" to tag);
-		return exchange("/posts/dates", params, object : ParameterizedTypeReference<PostsByDate>() {}).body
+		return exchange("/posts/dates", params, object : ParameterizedTypeReference<PostsByDate>() {}).body!!
 	}
 
 	open fun suggestTagsForPost(url: String): SuggestedTags {
 		val params = exchangeParameters("url" to url)
-		val result = exchange("/posts/suggest", params, object : ParameterizedTypeReference<Array<Map<String, Array<String>>>>() {})
-		val body: Array<Map<String, Array<String>>> = result.body
+		val result: ResponseEntity<Array<Map<String, Array<String>>>> = exchange("/posts/suggest", params, object : ParameterizedTypeReference<Array<Map<String, Array<String>>>>() {})
+		val body = result.body!!
 		val popular = "popular"
 		val recommended = "recommended"
 		val popularStrings = body.first { it.containsKey(popular) }[popular]
@@ -103,12 +103,12 @@ open class PinboardClient(private var token: String,
 	}
 
 	open fun getUserTags(): Map<String, Int> {
-		return exchange("/tags/get", exchangeParameters(), object : ParameterizedTypeReference<Map<String, Int>>() {}).body
+		return exchange("/tags/get", exchangeParameters(), object : ParameterizedTypeReference<Map<String, Int>>() {}).body!!
 	}
 
-	private fun <T> exchange(incomingUrl: String,
-	                         paramMap: Map<String, String>,
-	                         ptr: ParameterizedTypeReference<T>?): ResponseEntity<T> {
+	private inline fun <reified T> exchange(incomingUrl: String,
+	                                        paramMap: Map<String, String>,
+	                                        ptr: ParameterizedTypeReference<T>): ResponseEntity<T> {
 		val params = defaultParameters(paramMap)
 		val map = params.entries.map { "${it.key}={${it.key}}" }
 		val paramString = map.joinToString("&")
@@ -117,7 +117,7 @@ open class PinboardClient(private var token: String,
 	}
 
 	private fun isDone(result: ResponseEntity<String>): Boolean {
-		return result.body.contains("done") && result.statusCode == HttpStatus.OK
+		return result.body!!.contains("done") && result.statusCode == HttpStatus.OK
 	}
 
 	private fun exchangeParameters(vararg pairs: Pair<String, Any?>): Map<String, String> {
@@ -153,24 +153,24 @@ open class PinboardClient(private var token: String,
 	}
 
 	open fun deleteTag(s: String): Boolean {
-		val result = exchange("/tags/delete", exchangeParameters("tag" to arrayOf(s)), object : ParameterizedTypeReference<String>() {}).body
+		val result = exchange("/tags/delete", exchangeParameters("tag" to arrayOf(s)), object : ParameterizedTypeReference<String>() {}).body!!
 		return (result.toLowerCase().contains("done"))
 	}
 
 	open fun getUserSecret(): String {
-		return exchange("/user/secret", exchangeParameters(), object : ParameterizedTypeReference<Map<String, String>>() {}).body["result"]!!
+		return exchange("/user/secret", exchangeParameters(), object : ParameterizedTypeReference<Map<String, String>>() {}).body!!["result"]!!
 	}
 
 	open fun getApiToken(): String {
-		return exchange("/user/api_token/", exchangeParameters(), object : ParameterizedTypeReference<Map<String, String>>() {}).body["result"]!!
+		return exchange("/user/api_token/", exchangeParameters(), object : ParameterizedTypeReference<Map<String, String>>() {}).body!!["result"]!!
 	}
 
 	open fun getUserNotes(): Notes {
-		return exchange("/notes/list", exchangeParameters(), object : ParameterizedTypeReference<Notes>() {}).body
+		return exchange("/notes/list", exchangeParameters(), object : ParameterizedTypeReference<Notes>() {}).body!!
 	}
 
 	open fun getUserNote(id: String): Note {
-		return exchange("/notes/" + id, exchangeParameters(), object : ParameterizedTypeReference<Note>() {}).body
+		return exchange("/notes/" + id, exchangeParameters(), object : ParameterizedTypeReference<Note>() {}).body!!
 	}
 
 	private fun defaultParameters(parmMap: Map<String, Any?>): Map<String, Any?> {
@@ -198,11 +198,11 @@ open class PinboardClient(private var token: String,
 }
 
 open class Note(var id: String?,
-           var title: String?,
-           var length: Int?,
-           created: Date?,
-           updated: Date?,
-           var hash: String?) {
+                var title: String?,
+                var length: Int?,
+                created: Date?,
+                updated: Date?,
+                var hash: String?) {
 
 	@JsonSerialize(using = NoteTimeSerializer::class)
 	@JsonDeserialize(using = NoteTimeDeserializer::class)
@@ -235,14 +235,14 @@ open class Bookmarks(date: Date?, var user: String?, var posts: Array<Bookmark>)
 }
 
 open class Bookmark(var href: String?,
-               var description: String?,
-               var extended: String?,
-               var hash: String?,
-               var meta: String?,
-               time: java.util.Date?,
-               shared: Boolean,
-               toread: Boolean,
-               tags: Array<String>) {
+                    var description: String?,
+                    var extended: String?,
+                    var hash: String?,
+                    var meta: String?,
+                    time: java.util.Date?,
+                    shared: Boolean,
+                    toread: Boolean,
+                    tags: Array<String>) {
 
 	private constructor() : this(null, null, null, null, null, null, false, false, emptyArray())
 

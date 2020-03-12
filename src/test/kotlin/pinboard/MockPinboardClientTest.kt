@@ -1,15 +1,13 @@
 package pinboard
 
-import org.junit.Before
-import org.junit.Test
-import org.junit.runner.RunWith
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.test.autoconfigure.json.AutoConfigureJsonTesters
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.HttpMethod
 import org.springframework.http.MediaType
-import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.client.ExpectedCount
 import org.springframework.test.web.client.ExpectedCount.manyTimes
 import org.springframework.test.web.client.MockRestServiceServer
@@ -29,19 +27,18 @@ import java.util.*
 /**
  * @author <a href="mailto:josh@joshlong.com">Josh Long</a>
  */
-@SpringBootTest(classes = arrayOf(MockPinboardClientTest.Config::class), properties = arrayOf("pinboard.token=1234"))
-@RunWith(SpringRunner::class)
+@SpringBootTest(
+		classes = [MockPinboardClientTest.Config::class],
+		properties = ["pinboard.token=1234"]
+)
 @AutoConfigureJsonTesters
-class MockPinboardClientTest {
+class MockPinboardClientTest(
+		@Autowired val restTemplate: RestTemplate,
+		@Autowired val pinboardClient: PinboardClient
+) {
 
 	@SpringBootApplication
 	class Config
-
-	@Autowired
-	private var restTemplate: RestTemplate? = null
-
-	@Autowired
-	private val pinboardClient: PinboardClient? = null
 
 	private var mockRestServiceServer: MockRestServiceServer? = null
 	private val auth = "1234"
@@ -59,7 +56,7 @@ class MockPinboardClientTest {
 		bookmark.tags
 	}
 
-	@Before
+	@BeforeEach
 	fun setUp() {
 		this.mockRestServiceServer = MockRestServiceServer.bindTo(this.restTemplate).build()
 	}
