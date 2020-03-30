@@ -40,6 +40,29 @@ open class PinboardClient(private var token: String,
 
 	private val pinboardApiEndpoint = "https://api.pinboard.in/v1"
 
+	open fun updatePost(post: Bookmark) =
+			updatePost(
+					url = post.href!!,
+					description = post.description!!,
+					extended = post.extended!!,
+					tags = post.tags,
+					dt = post.time!!,
+					toread = post.toread,
+					shared = post.shared
+			)
+
+
+	open fun updatePost(
+			url: String,
+			description: String,
+			extended: String,
+			tags: Array<String>,
+			dt: Date,
+			shared: Boolean,
+			toread: Boolean
+	): Boolean =
+			this.addPost(url = url, description = description, replace = true, extended = extended, tags = tags, dt = dt, shared = shared, toread = toread)
+
 	open fun addPost(url: String,
 	                 description: String,
 	                 extended: String,
