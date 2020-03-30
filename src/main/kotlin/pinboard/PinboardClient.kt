@@ -86,9 +86,18 @@ open class PinboardClient(private var token: String,
 		return exchange("/posts/recent", parameters, object : ParameterizedTypeReference<Bookmarks>() {}).body!!
 	}
 
-	open fun getNoOfPostsByDate(tag: Array<String>): PostsByDate {
+	open fun getCountOfPostsByDate(tag: Array<String>): PostsByDate {
 		val params = exchangeParameters("tag" to tag);
 		return exchange("/posts/dates", params, object : ParameterizedTypeReference<PostsByDate>() {}).body!!
+	}
+
+
+	@Deprecated(
+			message = "use getCountOfPostsByDate instead",
+			replaceWith = ReplaceWith("getCountOfPostsByDate(tag)")
+	)
+	open fun getNoOfPostsByDate(tag: Array<String>): PostsByDate {
+		return getCountOfPostsByDate(tag)
 	}
 
 	open fun suggestTagsForPost(url: String): SuggestedTags {

@@ -43,9 +43,7 @@ class MockPinboardClientTest(
 	private var mockRestServiceServer: MockRestServiceServer? = null
 	private val auth = "1234"
 	private val commonUriParams = """ format=json&auth_token=${auth}   """.trim()
-
 	private val testTag = "pbctest"
-
 	private val testTag2 = "pbctest2"
 
 	private val bookmark = Bookmark("http:/" +
@@ -92,7 +90,7 @@ class MockPinboardClientTest(
 		mockReply("""
             /posts/add?dt=$encodeDate&shared=yes&toread=yes&format=json&replace=yes&description=description&auth_token=$auth&url=http://garfield.com&extended=extended&tags=pbctest%20pbctest2 """
 				, """  { "status" : "done"}  """)
-		val post = pinboardClient!!.addPost(bookmark.href!!, bookmark.description!!, bookmark.extended!!, bookmark.tags, bookmark.time!!, true, true, true)
+		val post = pinboardClient.addPost(bookmark.href!!, bookmark.description!!, bookmark.extended!!, bookmark.tags, bookmark.time!!, true, true, true)
 		assert(post, { "the bookmark has not been added." })
 	}
 
@@ -114,7 +112,7 @@ class MockPinboardClientTest(
          """
 		mockReply("/posts/get?format=json&auth_token=$auth&url=http://garfield.com", json)
 
-		val result = pinboardClient!!.getPosts(bookmark.href)
+		val result = pinboardClient.getPosts(bookmark.href)
 		val href = result.posts.first().href
 		assert(href == bookmark.href)
 	}
@@ -136,7 +134,7 @@ class MockPinboardClientTest(
          """
 		val uri = """ /posts/recent?format=json&count=15&tag=pbctest%20pbctest2&auth_token=$auth  """
 		mockReply(uri, json)
-		val result = pinboardClient!!.getRecentPosts(tag = bookmark.tags)
+		val result = pinboardClient.getRecentPosts(tag = bookmark.tags)
 		val href = result.posts.first().href
 		assert(href == bookmark.href)
 		mockRestServiceServer!!.verify()
@@ -152,8 +150,7 @@ class MockPinboardClientTest(
         """
 		mockReply("/posts/all?meta=0&format=json&start=0&tag=pbctest%20pbctest2&auth_token=$auth&results=-1", json)
 		assert(bookmark.href != null)
-		val pbc = pinboardClient!!
-		assert(pbc.getAllPosts(bookmark.tags).size == 1)
+		assert(this.pinboardClient.getAllPosts(bookmark.tags).size == 1)
 	}
 
 	@Test
@@ -163,7 +160,7 @@ class MockPinboardClientTest(
 		mockReply("/posts/dates?format=json&tag=twis&auth_token=$auth", json)
 
 		val tagName = "twis"
-		val result = pinboardClient!!.getNoOfPostsByDate(arrayOf(tagName))
+		val result = pinboardClient.getCountOfPostsByDate(arrayOf(tagName))
 		assert(result.user!!.toLowerCase() == "starbuxman")
 		assert(result.dates!!.isNotEmpty())
 		assert(result.tag!!.contains(tagName))
@@ -178,7 +175,7 @@ class MockPinboardClientTest(
          tags/delete?format=json&tag=${first}&auth_token=${auth}
         """
 		mockReply(uri, """ { "status" : "done" } """)
-		assert(pinboardClient!!.deleteTag(first))
+		assert(pinboardClient.deleteTag(first))
 	}
 
 	@Test
