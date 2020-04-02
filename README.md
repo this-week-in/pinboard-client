@@ -1,5 +1,7 @@
 # A Simple Pinboard Client
 
+![Build Status](https://github.com/this-week-in/pinboard-client/workflows/CI/badge.svg)
+
 This is a Kotlin-language based Pinboard API client. It works with the version of the API as of 17 August 2017. 
 
 Though it is implemented in Kotlin, it may be used with any JVM-based programming language. Here are some examples of how to instantiate with Java. 
